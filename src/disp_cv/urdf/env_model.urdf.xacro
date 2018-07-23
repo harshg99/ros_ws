@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<robot name="ur5robot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find disp_cv)/urdf/table_info.urdf.xacro"/>
+  <xacro:include filename="$(find disp_cv)/urdf/camera_desc.urdf.xacro"/>
+  <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro"/>
+  <xacro:include filename="$(find disp_cv)/urdf/common_gazebo.gazebo.xacro" />
+  <xacro:include filename="$(find disp_cv)/urdf/sensor_def.gazebo.xacro"/>
+  <xacro:ur5_robot prefix="" joint_limited="true"
+    shoulder_pan_lower_limit="${-pi}" shoulder_pan_upper_limit="${pi}"
+    shoulder_lift_lower_limit="${-pi}" shoulder_lift_upper_limit="${pi}"
+    elbow_joint_lower_limit="${-pi}" elbow_joint_upper_limit="${pi}"
+    wrist_1_lower_limit="${-pi}" wrist_1_upper_limit="${pi}"
+    wrist_2_lower_limit="${-pi}" wrist_2_upper_limit="${pi}"
+    wrist_3_lower_limit="${-pi}" wrist_3_upper_limit="${pi}"
+  />
+  <xacro:support/>
+  <xacro:camera_xtion/>
+  <joint name="camera_to_camera_holder" type="revolute">
+    <parent link="camera_holder"/>
+    <child link="camera_asus"/>
+    <origin xyz="0.20 0.0475 0.375" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="${-2.0 * pi}" upper="${2.0 * pi}" effort="150.0" velocity="3.15"/>
+  </joint>
+
+<joint name="ur5_robot_to_mount" type="fixed">
+  <parent link="mount"/>
+  <child link="base_link"/>
+  <origin xyz="0 0 0.60" rpy="0 0 0"/>
+</joint>
+
+<link name="world" />
+
+<joint name="world_joint" type="fixed">
+  <parent link="world" />
+  <child link = "base_support" />
+  <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+
+</joint>
+
+<transmission name="camera_move">
+<type>transmission_interface/SimpleTransmission</type>
+<joint name="camera_to_camera_holder">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+</joint>
+<actuator name="motor1">
+    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    <mechanicalReduction>1</mechanicalReduction>
+</actuator>
+</transmission>
+
+</robot>
